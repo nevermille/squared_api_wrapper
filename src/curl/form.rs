@@ -71,9 +71,9 @@ pub fn add_form_file_element(form: &mut Form, key: &str, file: &str) -> anyhow::
         .to_string();
 
     let mut form_element = form.part(key);
+    form_element.file(file);
     form_element.filename(&file_name);
     form_element.content_type(&mime_type);
-    form_element.file_content(file);
     form_element.add()?;
 
     Ok(())
