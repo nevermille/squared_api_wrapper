@@ -14,19 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+mod api;
 
-#![warn(missing_docs)]
-#![warn(clippy::missing_docs_in_private_items)]
-#![doc = include_str!("../README.md")]
-
-/// Functions for easy curl management
-mod curl;
-/// The enums
-pub mod enums;
-/// Response structures
-pub mod response;
-mod traits;
-
-pub use curl::easy::*;
-pub use curl::form::*;
-pub use curl::header::*;
+pub use api::*;

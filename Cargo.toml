@@ -5,6 +5,6 @@ edition = "2021"
 
 [dependencies]
 curl = "0.4.46"
-http_codex = "1.0.1"
+http_codex = "1.0.2"
 anyhow = "1.0.86"
 mime_guess = "2.0.4"
