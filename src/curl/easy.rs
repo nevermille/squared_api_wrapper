@@ -16,19 +16,26 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 use crate::response::BinaryResponse;
-use curl::easy::Easy;
+use curl::easy::{Easy, Form};
+use std::io::Read;
 
 /// Executes an easy request
 ///
 /// # Parameters
 ///
 /// * `curl`: The request to execute
-pub fn curl_easy_execute(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
+pub fn curl_easy_execute(curl: &mut Easy, data: Option<&[u8]>) -> anyhow::Result<BinaryResponse> {
     let mut response: Vec<u8> = Vec::new(); // That's where the response will be written on
+    let mut raw_data = data.unwrap_or_default();
 
     {
         // We need this for lifetime reasons
         let mut transfer = curl.transfer();
+
+        // How we pass data to mailjet
+        if !raw_data.is_empty() {
+            transfer.read_function(|buffer| Ok(raw_data.read(buffer).unwrap_or_default()))?
+        };
 
         // How we read mailjet's response
         transfer.write_function(|buffer| {
@@ -52,7 +59,7 @@ pub fn curl_easy_execute(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
 ///
 /// * `curl`: The request to execute
 pub fn get(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
-    curl_easy_execute(curl)
+    curl_easy_execute(curl, None)
 }
 
 /// Executes an HTTP easy request with a POST
@@ -60,9 +67,20 @@ pub fn get(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
 /// # Parameters
 ///
 /// * `curl`: The request to execute
-pub fn post(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
+/// * `data`: The data to send
+/// * `form`: The multipart POST form
+pub fn post(
+    curl: &mut Easy,
+    data: Option<&[u8]>,
+    form: Option<Form>,
+) -> anyhow::Result<BinaryResponse> {
     curl.post(true)?;
-    curl_easy_execute(curl)
+
+    if let Some(v) = form {
+        curl.httppost(v)?;
+    }
+
+    curl_easy_execute(curl, data)
 }
 
 /// Executes an HTTP easy request with a DELETE
@@ -70,9 +88,10 @@ pub fn post(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
 /// # Parameters
 ///
 /// * `curl`: The request to execute
-pub fn put(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
+/// * `data`: The data to send
+pub fn put(curl: &mut Easy, data: Option<&[u8]>) -> anyhow::Result<BinaryResponse> {
     curl.put(true)?;
-    curl_easy_execute(curl)
+    curl_easy_execute(curl, data)
 }
 
 /// Executes an HTTP easy request with a DELETE
@@ -82,7 +101,7 @@ pub fn put(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
 /// * `curl`: The request to execute
 pub fn delete(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
     curl.custom_request("DELETE")?;
-    curl_easy_execute(curl)
+    curl_easy_execute(curl, None)
 }
 
 /// Adds basic authentification to request
