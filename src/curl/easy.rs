@@ -84,3 +84,15 @@ pub fn delete(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
     curl.custom_request("DELETE")?;
     curl_easy_execute(curl)
 }
+
+/// Adds basic authentification to request
+///
+/// * `curl`: The request to edit
+/// * `username`: The username
+/// * `password`: The password
+pub fn basic_auth(curl: &mut Easy, username: &str, password: &str) -> anyhow::Result<()> {
+    curl.username(username)?;
+    curl.password(password)?;
+
+    Ok(())
+}
