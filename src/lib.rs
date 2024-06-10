@@ -25,7 +25,8 @@ mod curl;
 pub mod enums;
 /// Response structures
 pub mod response;
-mod traits;
+/// Traits
+pub mod traits;
 
 pub use curl::easy::*;
 pub use curl::form::*;

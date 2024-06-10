@@ -15,8 +15,21 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-use curl::easy::Easy;
+use curl::easy::{Easy, List};
 
+/// The base functions of an API wrapper
 pub trait Api {
-    fn get_curl_base(&self) -> Easy;
+    /// Returns an Easy object preconfigured for every route
+    fn get_easy_base(&self) -> Easy;
+
+    /// Returns a headers list with data to use for every route
+    fn get_headers_base(&self) -> List;
+
+    /// Returns an Easy object and a headers list with data to use for every route
+    fn get_base_data(&self) -> (Easy, List) {
+        (self.get_easy_base(), self.get_headers_base())
+    }
+
+    /// Returns the root url to use for every route
+    fn get_root_url(&self) -> String;
 }
