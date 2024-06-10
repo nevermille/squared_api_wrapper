@@ -20,14 +20,14 @@ use curl::easy::{Easy, List};
 /// The base functions of an API wrapper
 pub trait Api {
     /// Returns an Easy object preconfigured for every route
-    fn get_easy_base(&self) -> Easy;
+    fn get_easy_base(&self) -> anyhow::Result<Easy>;
 
     /// Returns a headers list with data to use for every route
-    fn get_headers_base(&self) -> List;
+    fn get_headers_base(&self) -> anyhow::Result<List>;
 
     /// Returns an Easy object and a headers list with data to use for every route
-    fn get_base_data(&self) -> (Easy, List) {
-        (self.get_easy_base(), self.get_headers_base())
+    fn get_base_data(&self) -> anyhow::Result<(Easy, List)> {
+        Ok((self.get_easy_base()?, self.get_headers_base()?))
     }
 
     /// Returns the root url to use for every route
