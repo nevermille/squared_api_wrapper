@@ -58,8 +58,8 @@ pub fn curl_easy_execute(curl: &mut Easy, data: Option<&[u8]>) -> anyhow::Result
 /// # Parameters
 ///
 /// * `curl`: The request to execute
-pub fn get(curl: &mut Easy) -> anyhow::Result<BinaryResponse> {
-    curl_easy_execute(curl, None)
+pub fn get(curl: &mut Easy, data: Option<&[u8]>) -> anyhow::Result<BinaryResponse> {
+    curl_easy_execute(curl, data)
 }
 
 /// Executes an HTTP easy request with a POST
